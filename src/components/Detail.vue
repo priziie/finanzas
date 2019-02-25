@@ -11,7 +11,8 @@
                     <th>Tasa</th>
                     <th>Años</th>
                     <th>Cantidad</th>
-                    <th>Generado</th>
+                    <th>Int mensuales</th>
+                    <th>Generado al {{ y.year + (general.periodo/general.oneYear)}}</th>
                 </tr>    
                 <tr v-for="(p, index) in y.plazos" :key="index" :index ="index">
                     <td>{{ p.startDate.toLocaleDateString('es-SV', { year: 'numeric', month: 'numeric', day: 'numeric' }) }}</td>
@@ -25,6 +26,7 @@
                     <td><input type="text" :value="p.cuota" @blur="setCuotaPlazo({
                         year: y.year, index: index, value: $event.target.value
                     })"/></td>
+                    <td>{{ p.intMensual }}</td>
                     <td>{{ p.valFinal }}</td>
                 </tr>
             </table>
@@ -33,7 +35,7 @@
 </template>
 
 <script>
-import {mapState, mapMutations, mapGetters} from 'vuex';
+import {mapState, mapMutations, mapGetters, mapActions} from 'vuex';
 export default {
     data(){
         return{
@@ -41,7 +43,7 @@ export default {
         }
     },
     computed: {
-        ...mapState(['plazosByYear']),
+        ...mapState(['plazosByYear','general']),
         obtnerPlazosDe(year){
             if(this.plazos.length > 0){
                 // this.plazos.forEach(x => {
@@ -64,9 +66,8 @@ export default {
         }
     },
     methods: {
-        ...mapMutations(['addEmptyFilter','updateFilterFrom','updateFilterTo','updateFilterCuota', 
-        'setTasaPlazo','setCuotaPlazo','setPeriodoPlazo'])
-        
+        ...mapMutations(['addEmptyFilter','updateFilterFrom','updateFilterTo','updateFilterCuota']),
+        ...mapActions(['setTasaPlazo','setCuotaPlazo','setPeriodoPlazo'])
     }
 }
 </script>

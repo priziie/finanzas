@@ -12,6 +12,9 @@
         Dias a 1 año: <input type="text" :value="general.oneYear"
             @blur="setPerUno($event.target.value)"/>
             <br>
+        Fecha inicio plazos: <input type="text" :value="general.inicio"
+            @blur="setInicio($event.target.value)"/>
+            <br>
     </div>
 </template>
 
@@ -24,7 +27,7 @@ export default {
         }
     },
     computed: mapState(['general']),
-    methods: mapMutations(['setInteres','setIntUno','setPeriodo','setPerUno'])
+    methods: mapMutations(['setInteres','setIntUno','setPeriodo','setPerUno','setInicio'])
 }
 </script>
 
