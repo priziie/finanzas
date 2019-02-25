@@ -1,0 +1,38 @@
+{
+  "name": "finanzas",
+  "version": "1.0.0",
+  "description": "finanzas",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "start": "webpack-dev-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/priziie/finanzas.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/priziie/finanzas/issues"
+  },
+  "homepage": "https://github.com/priziie/finanzas#readme",
+  "devDependencies": {
+    "@babel/core": "^7.3.3",
+    "@babel/preset-env": "^7.3.1",
+    "babel-loader": "^8.0.5",
+    "css-loader": "^2.1.0",
+    "html-webpack-plugin": "^3.2.0",
+    "style-loader": "^0.23.1",
+    "vue-loader": "^15.6.4",
+    "webpack": "^4.29.5",
+    "webpack-cli": "^3.2.3",
+    "webpack-dev-server": "^3.2.0"
+  },
+  "dependencies": {
+    "vue": "^2.6.7",
+    "vue-template-compiler": "^2.6.7",
+    "vuex": "^3.1.0"
+  }
+}
