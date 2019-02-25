@@ -15,6 +15,9 @@
         Fecha inicio plazos: <input type="text" :value="general.inicio"
             @blur="setInicio($event.target.value)"/>
             <br>
+        Capitalizable: <input type="text" :value="general.capitalizable"
+            @blur="setCapitalizable($event.target.value)"/>
+            <br>
     </div>
 </template>
 
@@ -27,7 +30,7 @@ export default {
         }
     },
     computed: mapState(['general']),
-    methods: mapMutations(['setInteres','setIntUno','setPeriodo','setPerUno','setInicio'])
+    methods: mapMutations(['setInteres','setIntUno','setPeriodo','setPerUno','setInicio', 'setCapitalizable'])
 }
 </script>
 

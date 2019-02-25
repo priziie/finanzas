@@ -12,6 +12,7 @@
                     <th>Años</th>
                     <th>Cantidad</th>
                     <th>Int mensuales</th>
+                    <th>Ganancias al mes</th>
                     <th>Generado al {{ y.year + (general.periodo/general.oneYear)}}</th>
                 </tr>    
                 <tr v-for="(p, index) in y.plazos" :key="index" :index ="index">
@@ -27,6 +28,7 @@
                         year: y.year, index: index, value: $event.target.value
                     })"/></td>
                     <td>{{ p.intMensual }}</td>
+                    <td>{{ p.intTotalMes }}</td>
                     <td>{{ p.valFinal }}</td>
                 </tr>
             </table>

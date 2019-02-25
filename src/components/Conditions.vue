@@ -7,6 +7,7 @@
                 @blur="updateFilterTo({index: index, value: $event.target.value})"/>
             Cuota: <input type="text" :value="c.cuota" :index="index" 
                 @blur="updateFilterCuota({index: index, value: $event.target.value})"/>
+            <input type="button" value="Eliminar" @click="removeFilter(index)"/>
             <input type="button" value="Más filtros" @click="addEmptyFilter" v-if="index == (conditions.length-1)"/>
         </div>
     </div>
@@ -21,7 +22,8 @@ export default {
         }
     },
     computed: mapState(['conditions']),
-    methods: mapMutations(['addEmptyFilter','updateFilterFrom','updateFilterTo','updateFilterCuota'])
+    methods: mapMutations(['addEmptyFilter','updateFilterFrom',
+        'updateFilterTo','updateFilterCuota','removeFilter'])
 }
 </script>
 
