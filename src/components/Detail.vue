@@ -2,8 +2,8 @@
     <div>
         <br>
         <br>
-        <div v-for="y in plazosByYear" :key="y.year">
-            Año {{ y.year }}
+        <!-- <div v-for="y in plazosByYear" :key="y.year"> -->
+            <!-- Año {{ y.year }} -->
             <table>
                 <tr>
                     <th>Fecha inicio</th>
@@ -13,26 +13,37 @@
                     <th>Cantidad</th>
                     <th>Int mensuales</th>
                     <th>Ganancias al mes</th>
-                    <th>Generado al {{ y.year + (general.periodo/general.oneYear)}}</th>
+                    <th>Sumado</th>
+                    <!-- <th>Generado al {{ y.year + (general.periodo/general.oneYear)}}</th> -->
                 </tr>    
-                <tr v-for="(p, index) in y.plazos" :key="index" :index ="index">
+                <tr v-for="(p, index) in plazosList" :key="index" :index ="index">
                     <td>{{ p.startDate.toLocaleDateString('es-SV', { year: 'numeric', month: 'numeric', day: 'numeric' }) }}</td>
                     <td>{{ p.endDate.toLocaleDateString('es-SV', { year: 'numeric', month: 'numeric', day: 'numeric' }) }}</td>
-                    <td><input type="text" :value="p.interes" @blur="setTasaPlazo({
-                        year: y.year, index: index, value: $event.target.value
-                    })"/></td>
-                    <td><input type="text" :value="p.periodo"  @blur="setPeriodoPlazo({
-                        year: y.year, index: index, value: $event.target.value
-                    })"/></td>
-                    <td><input type="text" :value="p.cuota" @blur="setCuotaPlazo({
-                        year: y.year, index: index, value: $event.target.value
-                    })"/></td>
+                    <td>
+                        <!-- <input type="text" :value="p.interes" @blur="setTasaPlazo({
+                            year: y.year, index: index, value: $event.target.value
+                        })"/>  -->
+                        {{p.interes}}
+                    </td>
+                    <td>
+                        <!-- <input type="text" :value="p.periodo"  @blur="setPeriodoPlazo({
+                            year: y.year, index: index, value: $event.target.value
+                        })"/>  -->
+                        {{p.periodo}}
+                    </td>
+                    <td>
+                        <!-- <input type="text" :value="p.cuota" @blur="setCuotaPlazo({
+                            year: y.year, index: index, value: $event.target.value
+                        })"/> -->
+                        {{p.cuota}}
+                    </td>
                     <td>{{ p.intMensual }}</td>
                     <td>{{ p.intTotalMes }}</td>
-                    <td>{{ p.valFinal }}</td>
+                    <td>{{p.sumado}}</td>
+                    <!-- <td>{{ p.valFinal }}</td> -->
                 </tr>
             </table>
-        </div>
+        <!-- </div>  -->
     </div>
 </template>
 
@@ -45,7 +56,7 @@ export default {
         }
     },
     computed: {
-        ...mapState(['plazosByYear','general']),
+        ...mapState(['plazosByYear','general','plazosList']),
         obtnerPlazosDe(year){
             if(this.plazos.length > 0){
                 // this.plazos.forEach(x => {

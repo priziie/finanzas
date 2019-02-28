@@ -6,33 +6,40 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
     state: {
         conditions: [{
-            from: 2020,
+            from: 2019,
             to: 2023,
             cuota: 250,
         },{
             from: 2024,
             to: 2040,
-            cuota: 300
+            cuota: 300,
         }],
         general:{
-            inicio: '15-02-2020',
+            inicio: '01-03-2019',
             interes: 0.0625,
             periodo: 1080,
             intOne: 0.0525,
             oneYear: 360,
-            capitalizable: 30
+            capitalizable: 30,
+            intSixMonth: 0.05,
+            sixMonths: 180
         },
-        plazosByYear: []
+        plazosByYear: [],
+        plazosList: []
     },
     getters:{
         total(state){
-            if(state.plazosByYear.length > 0){
-                console.log(state.conditions[state.conditions.length-1].to)
-                return state.plazosByYear
-                    .map(p=> {
-                        return  p.plazos.filter(x=> x.endDate.getFullYear() == state.conditions[state.conditions.length-1].to)
-                                .reduce((acc, cur) => acc + cur.valFinal,0)
-                    }).reduce((acc, cur) => acc + cur,0)
+            if(state.plazosList.length > 0){
+                console.log("ahol")
+                console.log(state.plazosList
+                    .filter(p=> !p.sumado).reduce((acc, cur) => acc + cur.cuota,0))
+                return  state.plazosList
+                    .filter(p=> p.startDate.getTime() == p.endDate.getTime())
+                    .reduce((acc, cur) => acc + cur.intTotalMes,
+                        state.plazosList
+                        .filter(p=> !p.sumado)
+                        .reduce((acc, cur) => acc + cur.cuota,0)
+                    )
                     
             }
             return 0;
@@ -102,31 +109,23 @@ export const store = new Vuex.Store({
             // row.valFinal = vf
             //ahora la magia..
             let cont = 0;
-            var plazosList = []
+            // var plazosList = []
             state.plazosByYear.forEach(py => {
                 py.plazos.forEach((p, i)=>{
                     let accCuota = 0;
-                    plazosList.push(p)
+                    // plazosList.push(p)
                     p.intMensual = 0
-                    //obtener todos los plazos que venzan en el que la fecha de inicio de este plazo esté entre las fechas del plazo
-                    let startMonthDate = new Date(py.year, p.startDate.getMonth(), 1);
-                    let intTotalMensual = plazosList
-                            .filter(x=> startMonthDate.getTime() > x.startDate.getTime() 
-                                && startMonthDate.getTime() <= x.endDate.getTime())
-                            .reduce((acc, cur) => acc + cur.intMensual, 0)
-                    
-                    p.intTotalMes  = Math.round((intTotalMensual + p.intMensual) * 100) / 100;
 
                     if(cont > 0){
                         // para eso primero obtengo la fecha inicio del plazo del mes anterior
-                        let ffAnterior = plazosList[cont-1].startDate.getTime();
+                        let ffAnterior = state.plazosList[cont-1].startDate.getTime();
                         // console.log(newDate)
                         // ahora evaluar
-                        accCuota = plazosList.filter(x=> x.endDate.getTime() > ffAnterior 
+                        accCuota = state.plazosList.filter(x=> x.endDate.getTime() > ffAnterior 
                                                     && x.endDate.getTime() <= p.startDate.getTime())
-                                        .reduce((acc, cur) => acc + cur.valFinal, accCuota)
+                                        .reduce((acc, cur) => acc + cur.cuota, accCuota)
 
-                        accCuota += plazosList[cont-1].intTotalMes;
+                        accCuota += state.plazosList[cont-(state.general.capitalizable/30)].intTotalMes;
                         
                     }
 
@@ -136,19 +135,27 @@ export const store = new Vuex.Store({
                     if(py.year == year && index == i){
                         p.cuota += accCuota
                     }
-                    else{
-                        let cond = state.conditions.find(x => py.year >= x.from && py.year <= x.to);
-                        if(cond != undefined){
-                            p.cuota = parseFloat(cond.cuota) +accCuota;
-                        }
-                        else 
-                            p.cuota = 0
-                    }
+                    // else{
+                    //     let cond = state.conditions.find(x => py.year >= x.from && py.year <= x.to);
+                    //     if(cond != undefined){
+                    //         p.cuota = parseFloat(cond.cuota) +accCuota;
+                    //     }
+                    //     else 
+                    //         p.cuota = 0
+                    // }
                     // console.log("cuota: %s, interes: %s, periodo: %s, oneyear: %s ",p.cuota, p.interes,p.periodo,state.general.oneYear)
                     let intMensual = Math.round((p.cuota * (p.interes/daysYear)*state.general.capitalizable) * 100) / 100
                     p.intMensual = intMensual;
                     p.valFinal = (intMensual*12)+p.cuota
 
+                    //obtener todos los plazos que venzan en el que la fecha de inicio de este plazo esté entre las fechas del plazo
+                    let startMonthDate = new Date(py.year, p.startDate.getMonth(), 1);
+                    let intTotalMensual = state.plazosList
+                            .filter(x=> startMonthDate.getTime() > x.startDate.getTime() 
+                                && startMonthDate.getTime() <= x.endDate.getTime())
+                            .reduce((acc, cur) => acc + cur.intMensual, 0)
+                    
+                    p.intTotalMes  = Math.round((intTotalMensual + p.intMensual) * 100) / 100;
 
                     // console.log(vf)
                     cont++
@@ -167,16 +174,16 @@ export const store = new Vuex.Store({
             let startDay = parseInt(arrDate[0]);
 
             let endDate = new Date(end, 11, 31)
-            //  console.log(endDate)
-            var plazosList = []
+             console.log(endDate)
+            state.plazosList = []
             let cont = 0;
-            for (let a = start; a < end; a++) {
+            for (let a = start; a <= end; a++) {
                 // console.log(a)
                 // let newYear = [];
                 // state.plazos.push(newYear);
                 //hay que recorrer esto, por 12 meses, un plazo por cada mes :s
                 let plazos = []
-                let mIni = (a > start) ? 0 : startMonth-1;
+                let mIni = (a > start) ? 0 : startMonth;
                 for (let m = mIni; m <= 11; m++) {
                     let struct = {
                         interes: state.general.interes,
@@ -186,7 +193,8 @@ export const store = new Vuex.Store({
                         cuota: 0,
                         valFinal: 0,
                         startDate: null,
-                        endDate: null
+                        endDate: null,
+                        sumado: false
                     }
 
                     //seteando las fechas
@@ -195,59 +203,75 @@ export const store = new Vuex.Store({
                     let newDate = new Date(a, m, startDay +state.general.periodo);
                     // console.log(startDate)
                     // newDate.setDate(startDate.getDate() + state.general.periodo);
-                    // console.log(newDate)
                     //validar si ya tocan plazos de 1 año
                     // si la fecha fin del plazo se pasa del full stop.
+                    // console.log(newDate)
+                    console.log("start: ",struct.startDate)
                     if(newDate.getTime() > endDate.getTime()){
                         newDate = new Date(a, m, startDay + state.general.oneYear);
                         struct.interes = state.general.intOne;
                         struct.periodo = state.general.oneYear
+                        console.log("1, ",newDate, " new: ",endDate)
+                        if(newDate.getTime() > endDate.getTime()){
+                            newDate = new Date(a, m, startDay + state.general.sixMonths);
+                            struct.interes = state.general.intSixMonth;
+                            struct.periodo = state.general.sixMonths
+                            console.log("2, ",newDate)
+                            if(newDate.getTime() > endDate.getTime()){
+                                struct.interes = 0;
+                                struct.periodo = 0
+                                newDate = new Date(a, m, startDay);
+                                console.log("3, ",newDate)
+                            }
+                        }
                     }
-
-
-                    //obtener todos los plazos que venzan en el que la fecha de inicio de este plazo esté entre las fechas del plazo
-                    let startMonthDate = new Date(a, m, 1);
-                    let intTotalMensual = plazosList
-                            .filter(x=> startMonthDate.getTime() > x.startDate.getTime() 
-                                && startMonthDate.getTime() <= x.endDate.getTime())
-                            .reduce((acc, cur) => acc + cur.intMensual, 0)
-                    
-                    struct.intTotalMes  = Math.round((intTotalMensual + struct.intMensual) * 100) / 100;
 
 
                     //buscar los plazos que venzan despues de la fecha inicio del plazo anterior y antes del inicio de este
                     let accCuota = 0;
                     if(cont > 0){
                         // para eso primero obtengo la fecha inicio del plazo anterior
-                        let ffAnterior = plazosList[cont-1].startDate.getTime();
+                        let ffAnterior = state.plazosList[cont-1].startDate.getTime();
                         // console.log(newDate)
                         // ahora evaluar
-                        accCuota = plazosList.filter(x=> x.endDate.getTime() > ffAnterior 
-                                                    && x.endDate.getTime() <= struct.startDate.getTime())
-                                        .reduce((acc, cur) => acc + cur.cuota, accCuota);
+                        var newArray = state.plazosList.filter(x=> x.endDate.getTime() > ffAnterior 
+                        && x.endDate.getTime() <= struct.startDate.getTime());
+                        newArray.forEach(x=>x.sumado = true)
                         
-                        accCuota += plazosList[cont-1].intTotalMes;
+                        accCuota = newArray.reduce((acc, cur) => acc + cur.cuota, accCuota);
+                        
+                        accCuota += state.plazosList[cont-1].intTotalMes;
                         
                     }
-
+                    
                     //formula: Vf = cuota * (1+interes mensual)*periodo mensual
                     let isBisiesto = a % 400 === 0 || (a % 100 !== 0 && a % 4 === 0);
                     let daysYear = isBisiesto ? 366 : 365;
                     let cond = state.conditions.find(x => a >= x.from && a <= x.to);
                     if(cond != undefined){
-                        // console.log("este: ",struct.intTotalMes, " anterior: ", (cont > 0) ? plazosList[cont-1].intTotalMes : 0)
+                        // console.log("este: ",struct.intTotalMes, " anterior: ", (cont > 0) ? state.plazosList[cont-1].intTotalMes : 0)
                         struct.cuota = parseFloat(cond.cuota) + accCuota;
                         // console.log("cuota: %s, interes: %s, periodo: %s, oneyear: %s ",struct.cuota, struct.interes,struct.periodo,state.general.oneYear)
                         let intMensual = Math.round((struct.cuota * (struct.interes/daysYear)*state.general.capitalizable) * 100) / 100
                         struct.intMensual = intMensual;
-                        struct.valFinal = (intMensual*12)+struct.cuota;
+                        // struct.valFinal = (intMensual*12)+struct.cuota;
                         // console.log(vf)
                     }
+
+                    //obtener todos los plazos que venzan en el que la fecha de inicio de este plazo esté entre las fechas del plazo
+                    let startMonthDate = new Date(a, m, 1);
+                    console.log(startMonthDate)
+                    let intTotalMensual = state.plazosList
+                            .filter(x=> startMonthDate.getTime() > x.startDate.getTime() 
+                                && startMonthDate.getTime() <= x.endDate.getTime())
+                            .reduce((acc, cur) => acc + cur.intMensual, 0)
+
+                    struct.intTotalMes  = Math.round((intTotalMensual + struct.intMensual) * 100) / 100;
 
                     
                     struct.endDate = newDate;
                     plazos.push(struct)
-                    plazosList.push(struct)
+                    state.plazosList.push(struct)
                     // console.log(struct)
 
                     cont++
