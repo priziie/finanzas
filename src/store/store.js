@@ -7,11 +7,15 @@ export const store = new Vuex.Store({
     state: {
         conditions: [{
             from: 2019,
-            to: 2024,
-            cuota: 200,
+            to: 2023,
+            cuota: 250,
+        },{
+            from: 2024,
+            to: 2040,
+            cuota: 300,
         }],
         general:{
-            inicio: '01-03-2019',
+            inicio: '28-02-2019',
             interes: 0.0625,
             periodo: 1080,
             intOne: 0.0525,
@@ -20,7 +24,6 @@ export const store = new Vuex.Store({
             intSixMonth: 0.05,
             sixMonths: 180
         },
-        // plazosByYear: [],
         plazosList: []
     },
     getters:{
@@ -46,20 +49,26 @@ export const store = new Vuex.Store({
         setTasaPlazo({commit,state}, {index, value}){
             let row = state.plazosList[index];
             row.interes = parseFloat(value)
-            row.changed = true
+            // row.changed = true
             commit('recalculate', {index: index});
         },
         setCuotaPlazo({commit,state}, {index, value}){
             let row = state.plazosList[index];
             row.cuota = parseFloat(value)
-            row.changed = true
+            row.changeVal = parseFloat(value)
             
             commit('recalculate', {index: index});
         },
         setPeriodoPlazo({commit,state}, {index, value}){
             let row = state.plazosList[index];
             row.periodo = parseInt(value);
-            row.changed = true
+            // row.changed = true
+
+
+            row.endDate =  new Date(row.startDate.getFullYear(), 
+                            row.startDate.getMonth(),
+                            row.startDate.getDate() + row.periodo);
+                         
             commit('recalculate', {index: index});
         }
     },
@@ -138,8 +147,8 @@ export const store = new Vuex.Store({
                     //formula: Vf = cuota * (1+interes mensual)*periodo mensual
                     let isBisiesto = p.year % 400 === 0 || (p.year % 100 !== 0 && p.year % 4 === 0);
                     let daysYear = isBisiesto ? 366 : 365;
-                    if(p.changed){
-                        p.cuota += accCuota
+                    if(p.changeVal != 0){
+                        p.cuota = p.changeVal + accCuota
                     }
                     else{
                         let cond = state.conditions.find(x => p.year >= x.from && p.year <= x.to);
@@ -202,19 +211,13 @@ export const store = new Vuex.Store({
                         endDate: null,
                         sumado: false,
                         year: a,
-                        changed: false
+                        changeVal: 0
                     }
 
                     //seteando las fechas
                     struct.startDate = new Date(a, m, startDay);
 
                     let newDate = new Date(a, m, startDay +state.general.periodo);
-                    // console.log(startDate)
-                    // newDate.setDate(startDate.getDate() + state.general.periodo);
-                    //validar si ya tocan plazos de 1 año
-                    // si la fecha fin del plazo se pasa del full stop.
-                    // console.log(newDate)
-                    // console.log("start: ",struct.startDate)
                     if(newDate.getTime() > endDate.getTime()){
                         newDate = new Date(a, m, startDay + state.general.oneYear);
                         struct.interes = state.general.intOne;

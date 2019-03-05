@@ -20,22 +20,22 @@
                     <td>{{ p.startDate.toLocaleDateString('es-SV', { year: 'numeric', month: 'numeric', day: 'numeric' }) }}</td>
                     <td>{{ p.endDate.toLocaleDateString('es-SV', { year: 'numeric', month: 'numeric', day: 'numeric' }) }}</td>
                     <td>
-                        <input type="text" :value="p.interes" @blur="setTasaPlazo({
+                        <!-- <input type="text" :value="p.interes" @blur="setTasaPlazo({
                             index: index, value: $event.target.value
-                        })"/> 
-                        <!-- {{p.interes}} -->
+                        })"/>  -->
+                        {{p.interes}}
                     </td>
                     <td>
-                        <input type="text" :value="p.periodo"  @blur="setPeriodoPlazo({
+                        <!-- <input type="text" :value="p.periodo"  @blur="setPeriodoPlazo({
                             index: index, value: $event.target.value
-                        })"/> 
-                        <!-- {{p.periodo}} -->
+                        })"/>  -->
+                        {{p.periodo}}
                     </td>
                     <td>
-                        <input type="text" :value="p.cuota" @blur="setCuotaPlazo({
+                        <!-- <input type="text" :value="p.cuota" @blur="setCuotaPlazo({
                             index: index, value: $event.target.value
-                        })"/>
-                        <!-- {{p.cuota}} -->
+                        })"/> -->
+                        {{p.cuota}}
                     </td>
                     <td>{{ p.intMensual }}</td>
                     <td>{{ p.intTotalMes }}</td>
