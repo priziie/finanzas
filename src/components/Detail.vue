@@ -41,21 +41,21 @@
           />
           <span v-if="!edit">
             {{
-              p.startDate.toLocaleDateString('es-SV', {
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric'
-              })
+            p.startDate.toLocaleDateString('es-SV', {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric'
+            })
             }}
           </span>
         </td>
         <td>
           {{
-            p.endDate.toLocaleDateString('es-SV', {
-              year: 'numeric',
-              month: 'numeric',
-              day: 'numeric'
-            })
+          p.endDate.toLocaleDateString('es-SV', {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric'
+          })
           }}
         </td>
         <td>
@@ -99,28 +99,26 @@
             "
           />
           <span v-if="!edit">{{ p.changeVal }}</span>
-        </td> -->
+        </td>-->
         <td>
-        <input
-          v-if="edit"
-          type="text"
-          :value="p.cantidad"
-          @blur="
+          <input
+            v-if="edit"
+            type="text"
+            :value="p.cantidad"
+            @blur="
             setCantidadPlazo({
               index: index,
               value: $event.target.value
             })
           "
-        />
-        <span v-if="!edit">{{ p.cantidad }}</span>
+          />
+          <span v-if="!edit">{{ p.cantidad }}</span>
         </td>
         <td>{{ p.intMensual }}</td>
         <td>{{ p.intTotalMes }}</td>
         <td>{{ p.sumado }}</td>
         <td>
-          <button v-if="edit" @click="remove({ index: index })">
-            Eliminar
-          </button>
+          <button v-if="edit" @click="remove({ index: index })">Eliminar</button>
         </td>
         <!-- <td>{{ p.valFinal }}</td> -->
       </tr>
@@ -131,7 +129,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters, mapActions } from 'vuex';
+import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
@@ -139,7 +137,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['plazosByYear', 'general', 'plazosList']),
+    ...mapState(["plazosByYear", "general", "plazosList"]),
     obtnerPlazosDe(year) {
       if (this.plazos.length > 0) {
         // this.plazos.forEach(x => {
@@ -148,10 +146,10 @@ export default {
         return this.plazos
           .filter(x => x.startDate.getFullYear() == year)
           .map(p => {
-            let options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+            let options = { year: "numeric", month: "numeric", day: "numeric" };
             var pls = {
-              start: p.startDate.toLocaleDateString('es-SV', options),
-              end: p.endDate.toLocaleDateString('es-SV', options),
+              start: p.startDate.toLocaleDateString("es-SV", options),
+              end: p.endDate.toLocaleDateString("es-SV", options),
               cuota: p.cuota,
               periodo: p.periodo,
               tasa: p.interes,
@@ -164,25 +162,25 @@ export default {
   },
   methods: {
     ...mapMutations([
-      'addEmptyFilter',
-      'updateFilterFrom',
-      'updateFilterTo',
-      'updateFilterCuota'
+      "addEmptyFilter",
+      "updateFilterFrom",
+      "updateFilterTo",
+      "updateFilterCuota"
     ]),
     ...mapActions([
-      'setTasaPlazo',
-      'setCuotaPlazo',
-      'setPeriodoPlazo',
-      'setStartDate',
-      'setCantidadPlazo',
-      'remove'
+      "setTasaPlazo",
+      "setCuotaPlazo",
+      "setPeriodoPlazo",
+      "setStartDate",
+      "setCantidadPlazo",
+      "remove"
     ])
   }
 };
 </script>
 
 <style scoped>
-input[type='text'] {
+input[type="text"] {
   width: 80px;
   margin: 5px 10px;
 }

@@ -9,8 +9,8 @@ export const store = new Vuex.Store({
       {
         from: 2020,
         to: 2039,
-        cantidad: 700
-      }
+        cantidad: 700,
+      },
     ],
     general: {
       inicio: '05-02-2020',
@@ -20,10 +20,10 @@ export const store = new Vuex.Store({
       oneYear: 360,
       capitalizable: 30,
       intSixMonth: 0.05,
-      sixMonths: 180
+      sixMonths: 180,
     },
     plazosList: [],
-    intereses: []
+    intereses: [],
   },
   getters: {
     total(state) {
@@ -35,16 +35,16 @@ export const store = new Vuex.Store({
         //     .reduce((acc, cur) => acc + cur.cantidad, 0)
         // );
         return state.plazosList
-          .filter(p => p.startDate.getTime() == p.endDate.getTime())
+          .filter((p) => p.startDate.getTime() == p.endDate.getTime())
           .reduce(
             (acc, cur) => acc + cur.intTotalMes,
             state.plazosList
-              .filter(p => !p.sumado)
+              .filter((p) => !p.sumado)
               .reduce((acc, cur) => acc + cur.cantidad, 0)
           );
       }
       return 0;
-    }
+    },
   },
   actions: {
     setTasaPlazo({ commit, state }, { index, value }) {
@@ -107,14 +107,14 @@ export const store = new Vuex.Store({
       );
 
       commit('recalculate', { index: index });
-    }
+    },
   },
   mutations: {
     addEmptyFilter(state) {
       var emptyRow = {
         from: null,
         to: null,
-        cuota: null
+        cuota: null,
       };
       state.conditions.push(emptyRow);
     },
@@ -190,7 +190,7 @@ export const store = new Vuex.Store({
             startDate: new Date(a, m, startDay),
             endDate: null,
             sumado: false,
-            year: a
+            year: a,
           };
 
           let endDatePlazo = new Date(a, m, startDay + state.general.periodo);
@@ -222,8 +222,8 @@ export const store = new Vuex.Store({
           cont++;
         }
       }
-    }
-  }
+    },
+  },
 });
 
 const centralLogic = (plazoInfo, state, plazo) => {
@@ -237,12 +237,12 @@ const centralLogic = (plazoInfo, state, plazo) => {
     // ahora evaluar
     accCuota = state.plazosList
       .filter(
-        x =>
+        (x) =>
           x.endDate.getTime() > startDateAnterior &&
           x.endDate.getTime() <= plazoInfo.startDate.getTime() &&
           x.startDate.getTime() != x.endDate.getTime()
       )
-      .map(x => {
+      .map((x) => {
         x.sumado = true;
         return x;
       })
@@ -253,9 +253,9 @@ const centralLogic = (plazoInfo, state, plazo) => {
 
   //   console.log(state.intereses);
   const intTotalMensual = state.intereses
-    .filter(x => !x.sumado)
-    .filter(x => x.date.getTime() <= plazoInfo.startDate.getTime())
-    .map(x => {
+    .filter((x) => !x.sumado)
+    .filter((x) => x.date.getTime() <= plazoInfo.startDate.getTime())
+    .map((x) => {
       x.sumado = true;
       return x;
     })
@@ -273,7 +273,7 @@ const centralLogic = (plazoInfo, state, plazo) => {
     plazoInfo.cantidad = plazoInfo.changeCantidad;
   } else {
     const cuotaActual = state.conditions.find(
-      x => plazoInfo.year >= x.from && plazoInfo.year <= x.to
+      (x) => plazoInfo.year >= x.from && plazoInfo.year <= x.to
     );
     if (cuotaActual) {
       // console.log("este: ",plazoInfo.intTotalMes, " anterior: ", (plazo > 0) ? state.plazosList[plazo-1].intTotalMes : 0)
@@ -310,7 +310,7 @@ const centralLogic = (plazoInfo, state, plazo) => {
         nextInteresDate.getMonth(),
         nextInteresDate.getDate()
       ),
-      sumado: false
+      sumado: false,
     };
     state.intereses.push(intInfo);
 
